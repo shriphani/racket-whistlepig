@@ -34,21 +34,40 @@
                            [next_offset _long]))
 
 ;; whistlepig functions
-(define-whistlepig wp_entry_new (_fun -> _wp_entry-pointer)) ;; wp_entry_new()
-(define-whistlepig wp_entry_add_file (_fun _wp_entry-pointer _string _pointer -> _pointer))
-(define-whistlepig wp_index_add_entry (_fun _wp_index-pointer _wp_entry-pointer [r : (_ptr o _uint64)] -> [n : _pointer] -> (and (not n) r)))
+(define-whistlepig
+  wp_entry_new
+  (_fun -> _wp_entry-pointer))
+(define-whistlepig
+  wp_entry_add_file
+  (_fun _wp_entry-pointer _string _pointer -> _pointer))
+(define-whistlepig
+  wp_index_add_entry
+  (_fun _wp_index-pointer
+        _wp_entry-pointer
+        [r : (_ptr o _uint64)]
+        ->
+        [n : _pointer]
+        ->
+        (and (not n) r)))
 (define-whistlepig wp_entry_free (_fun _wp_entry-pointer -> _pointer))
 (define-whistlepig wp_index_create (_fun [m : (_ptr o (_ptr o _wp_index))] _string -> [n : _pointer] -> (if (not n) m n)))
 
-(define (add-source-file)
-  (begin
-    (define index (wp_index_create "index"))
-    (define entry (wp_entry_new))
-    (define f (fopen "racket-whistlepig.rkt" "r"))
-    (wp_entry_add_file entry "body" f)
-    (wp_index_add_entry index entry)
-    (wp_entry_free entry)
-    (fclose f)
-    (printf "Added this source file to the index\n")))
+(define (wp-entry-new)
+  (wp_entry_new))
 
-(add-source-file)
+(define (wp-index-create index-name)
+  (wp_index_create index-name))
+
+(define (wp-entry-add-file entry field file-pointer)
+  (wp_entry_add_file entry field file-pointer))
+
+(define (wp-index-add-entry index entry)
+  (wp_index_add_entry index entry))
+
+(define (wp-entry-free entry)
+  (wp_entry_free entry))
+
+(define (file-close f)
+  (fclose f))
+
+(provide (all-defined-out))
