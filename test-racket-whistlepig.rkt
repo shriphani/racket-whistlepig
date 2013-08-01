@@ -5,8 +5,8 @@
 (require srfi/14) ; charset library
 (require "racket-whistlepig.rkt")
 
-;; Create a new index in the current directory and
-;; add all the racket source files in it
+;; Create a new index in /tmp (so this is very much unix only)
+;; and add all the racket source files in it
 (define (add-source-files)
   (define source-files (filter
                         (lambda (f) (string-contains f ".rkt"))
