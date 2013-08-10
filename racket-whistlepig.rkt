@@ -11,11 +11,6 @@
 (define-whistlepig fopen (_fun _string _string -> _pointer)) ;; fopen
 (define-whistlepig fclose (_fun _pointer -> _void))
 
-;; whistlepig types
-(define wp-index-pointer (_cpointer 'WP-INDEX))
-(define wp-entry-pointer (_cpointer 'WP-ENTRY))
-(define wp-error-pointer (_cpointer 'WP-ERROR))
-
 ;; whistlepig structs
 
 (define-cstruct _mmap_obj ([fd _int]
@@ -34,24 +29,31 @@
                            [next_offset _long]))
 
 ;; whistlepig functions
-(define-whistlepig
-  wp_entry_new
-  (_fun -> _wp_entry-pointer))
-(define-whistlepig
-  wp_entry_add_file
-  (_fun _wp_entry-pointer _string _pointer -> _pointer))
+(define-whistlepig wp_entry_new (_fun -> _wp_entry-pointer))
+
+(define-whistlepig wp_entry_add_file (_fun _wp_entry-pointer
+                                           _string _pointer -> _pointer))
 (define-whistlepig
   wp_index_add_entry
   (_fun _wp_index-pointer
         _wp_entry-pointer
-        [r : (_ptr o _uint64)]
-        ->
-        [n : _pointer]
-        ->
-        (and (not n) r)))
-(define-whistlepig wp_entry_free (_fun _wp_entry-pointer -> _pointer))
-(define-whistlepig wp_index_create (_fun [m : (_ptr o (_ptr o _wp_index))] _string -> [n : _pointer] -> (if (not n) m n)))
+        [r : (_ptr o _uint64)] -> [n : _pointer] -> (and (not n) r)))
 
+(define-whistlepig wp_entry_free (_fun _wp_entry-pointer -> _pointer))
+
+(define-whistlepig
+  wp_index_create
+  (_fun [m : (_ptr o (_ptr o _wp_index))]
+        _string -> [n : _pointer] -> (if (not n) m n)))
+
+(define-whistlepig
+  wp_index_load
+  (_fun [i : (_ptr o (_ptr o _wp_index))]
+        _string
+        -> (p : _pointer)
+        -> (and (not p) i)))
+
+;; Export functions
 (define (wp-entry-new)
   (wp_entry_new))
 
@@ -66,6 +68,9 @@
 
 (define (wp-entry-free entry)
   (wp_entry_free entry))
+
+(define (wp-index-load index-path)
+  (wp_index_load index-path))
 
 (define (file-close f)
   (fclose f))
