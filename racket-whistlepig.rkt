@@ -1,6 +1,7 @@
 #lang racket/base
 (require ffi/unsafe
          ffi/unsafe/define)
+(require racket/stream)
 
 ;;;; Test if we can build/search from whistlepig
 
@@ -12,7 +13,6 @@
 (define-whistlepig fclose (_fun _pointer -> _void))
 
 ;; whistlepig structs
-
 (define-cstruct _mmap_obj ([fd _int]
                            [loaded_size _uint32]
                            [content _pointer]))
@@ -97,9 +97,9 @@
         (_ptr i _wp_query)
         _int
         [n : (_ptr o _uint32)]
-        [r : (_ptr o _wp_result)]
+        [r : _pointer]
         -> [s : _pointer]
-        -> (and (not s) r)))
+        -> (and (not s) n)))
 
 (define-whistlepig
   wp_index_count_results
@@ -147,12 +147,17 @@
   (wp_index_setup_query index query))
 
 (define (wp-index-run-query index query results-to-show)
-  (let ((buffer (malloc 'atomic 1024))
-        (to-ret '*))
+  (let* ((size    (* results-to-show 8))
+         (buffer  (malloc 'atomic size))  ; allocate
+         (num-res '*))
     (begin
-      (memset buffer 0 1024)
-      (set! to-ret (wp_index_run_query index query results-to-show)))
-    (wp_result-res1 to-ret)))
+      (memset buffer 0 size)
+      (set! num-res (wp_index_run_query index query results-to-show buffer)))
+    (list num-res (res-buf->arr buffer num-res _uint64))))
+
+(define (res-buf->arr res-buf num-res ptr-type)
+  (map (lambda (i) (ptr-ref res-buf ptr-type i))
+       (stream->list (in-range 0 num-res))))
 
 (define (file-close f)
   (fclose f))
