@@ -28,6 +28,14 @@
 (define-cstruct _wp_entry ([khash_t _pointer]
                            [next_offset _long]))
 
+(define-cstruct _wp_query ([type _uint8]
+                           [field _pointer]
+                           [word _pointer]
+                           [num_children _uint16]
+                           [children _pointer]
+                           [next _pointer]
+                           [last _pointer]))
+
 ;; whistlepig functions
 (define-whistlepig wp_entry_new (_fun -> _wp_entry-pointer))
 
@@ -53,6 +61,36 @@
         -> (p : _pointer)
         -> (and (not p) i)))
 
+(define-whistlepig
+  wp_query_parse
+  (_fun _string
+        _string
+        [q : (_ptr o (_ptr o _wp_query))]
+        -> [e : _pointer]
+        -> (and (not e) q)))
+
+(define-whistlepig
+  wp_query_to_s
+  (_fun [_ptr i _wp_query] _int _pointer -> _int))
+
+(define-whistlepig
+  wp_index_setup_query
+  (_fun (_ptr i _wp_index)
+        (_ptr i _wp_query)
+        -> _pointer))
+
+(define-whistlepig
+  wp_index_run_query
+  (_fun (_ptr i _wp_index)
+        (_ptr i _wp_query)
+        _int
+        [n : (_ptr o _int)]
+        _pointer
+        -> _pointer
+        -> n))
+
+(define *field-name* "body")
+
 ;; Export functions
 (define (wp-entry-new)
   (wp_entry_new))
@@ -71,6 +109,31 @@
 
 (define (wp-index-load index-path)
   (wp_index_load index-path))
+
+(define (wp-query-parse query field)
+  (wp_query_parse query field))
+
+(define (wp-query-to-s query)
+  (let* ((size   1024)
+         (buffer (malloc 'atomic size))
+         (to-ret '*))
+    (begin
+      (memset buffer 0 size)
+      (wp_query_to_s query size buffer)
+      (set! to-ret (cast buffer _pointer _string)))
+    to-ret))
+
+(define (wp-index-setup-query index query)
+  (wp_index_setup_query index query))
+
+(define (wp-index-run-query index query results-to-show)
+  (let ((buffer (malloc 'atomic results-to-show))
+        (to-ret '*))
+    (begin
+      (memset buffer 0 results-to-show)
+      (wp_index_run_query index query results-to-show buffer))
+    (set! to-ret buffer)
+    to-ret))
 
 (define (file-close f)
   (fclose f))
