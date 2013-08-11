@@ -89,6 +89,14 @@
         -> _pointer
         -> n))
 
+(define-whistlepig
+  wp_index_count_results
+  (_fun (_ptr i _wp_index)
+        (_ptr i _wp_query)
+        [n : (_ptr o _int)]
+        -> [r : _pointer]
+        -> (and (not r) n)))
+
 (define *field-name* "body")
 
 ;; Export functions
