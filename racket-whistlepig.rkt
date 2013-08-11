@@ -34,7 +34,18 @@
                            [num_children _uint16]
                            [children _pointer]
                            [next _pointer]
-                           [last _pointer]))
+                           [last _pointer]
+                           [segment_idx _uint16]
+                           [search_data _pointer]))
+
+(define-cstruct _wp_result ([res1 _uint64]
+                            [res2 _uint64]
+                            [res3 _uint64]))
+
+(define-cstruct _wp_error ([type _byte]
+                           [size _int]
+                           [msg _pointer]
+                           [srcs _pointer]))
 
 ;; whistlepig functions
 (define-whistlepig wp_entry_new (_fun -> _wp_entry-pointer))
@@ -76,18 +87,19 @@
 (define-whistlepig
   wp_index_setup_query
   (_fun (_ptr i _wp_index)
-        (_ptr i _wp_query)
-        -> _pointer))
+        [p : (_ptr i _wp_query)]
+        -> [r : _pointer]
+        -> (and (not r) (cast p _pointer _wp_query-pointer))))
 
 (define-whistlepig
   wp_index_run_query
   (_fun (_ptr i _wp_index)
         (_ptr i _wp_query)
         _int
-        [n : (_ptr o _int)]
-        _pointer
-        -> _pointer
-        -> n))
+        [n : (_ptr o _uint32)]
+        [r : (_ptr o _wp_result)]
+        -> [s : _pointer]
+        -> (and (not s) r)))
 
 (define-whistlepig
   wp_index_count_results
@@ -135,13 +147,12 @@
   (wp_index_setup_query index query))
 
 (define (wp-index-run-query index query results-to-show)
-  (let ((buffer (malloc 'atomic results-to-show))
+  (let ((buffer (malloc 'atomic 1024))
         (to-ret '*))
     (begin
-      (memset buffer 0 results-to-show)
-      (wp_index_run_query index query results-to-show buffer))
-    (set! to-ret buffer)
-    to-ret))
+      (memset buffer 0 1024)
+      (set! to-ret (wp_index_run_query index query results-to-show)))
+    (wp_result-res1 to-ret)))
 
 (define (file-close f)
   (fclose f))
