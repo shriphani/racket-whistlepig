@@ -60,6 +60,8 @@
 
 (define-whistlepig wp_entry_free (_fun _wp_entry-pointer -> _pointer))
 
+(define-whistlepig wp_index_exists (_fun _string -> _int))
+
 (define-whistlepig
   wp_index_create
   (_fun [m : (_ptr o (_ptr o _wp_index))]
@@ -145,6 +147,9 @@
 
 (define (wp-index-setup-query index query)
   (wp_index_setup_query index query))
+
+(define (wp-index-exists index-base-path)
+  (not (= 0 (wp_index_exists index-base-path))))
 
 (define (wp-index-run-query index query results-to-show)
   (let* ((size    (* results-to-show 8))
