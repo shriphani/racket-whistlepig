@@ -5,8 +5,7 @@
 (require srfi/14) ; charset library
 (require "racket-whistlepig.rkt")
 
-;; Create a new index in /tmp (so this is very much unix only)
-;; and add all the racket source files in it
+;; Create a new index and add the files to it
 (define (add-files index-prefix files)
   (define index (wp-index-create index-prefix))
   (map

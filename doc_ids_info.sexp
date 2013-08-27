@@ -1,0 +1,7 @@
+((1 "/Users/shriphani/Documents/blog/2013/07/13/new-blog/index.html" "New Blog" "http://blog.shriphani.com/2013/07/13/new-blog/")
+ (2 "/Users/shriphani/Documents/blog/2013/07/13/fast-dates-parser/index.html" "Fast Dates Parser" "http://blog.shriphani.com/2013/07/13/fast-dates-parser/")
+ (3 "/Users/shriphani/Documents/blog/2013/07/21/accessing-your-kindle-highlights/index.html" "Accessing Your Kindle Highlights" "http://blog.shriphani.com/2013/07/21/accessing-your-kindle-highlights/")
+ (4 "/Users/shriphani/Documents/blog/2013/07/21/pittsburgh-vintage-grand-prix-italian-cars/index.html" "Pittsburgh Vintage Grand Prix - Italian Cars" "http://blog.shriphani.com/2013/07/21/pittsburgh-vintage-grand-prix-italian-cars")
+ (5 "/Users/shriphani/Documents/blog/2013/07/22/the-percolator-paper/index.html" "The Percolator Paper" "http://blog.shriphani.com/2013/07/24/the-percolator-paper/")
+ (6 "/Users/shriphani/Documents/blog/2013/08/16/clueweb12-status-report/index.html" "Clueweb12++ Status Report" "http://blog.shriphani.com/2013/08/16/clueweb12-status-report/")
+ (7 "/Users/shriphani/Documents/blog/2013/08/27/racket-whistlepig-bindings/index.html" "Racket Whistlepig Bindings" "http://blog.shriphani.com/2013/08/27/racket-whistlepig-bindings/"))

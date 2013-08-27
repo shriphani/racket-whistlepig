@@ -13,7 +13,7 @@
 
 (define (start req)
   (response/xexpr
-   `(html (head (title "Hello World!"))
+   `(html (head (title "Shriphani's Blog Search"))
           (body (p ,@(map render-result (process-url (request-uri req))))))))
 
 (define (process-url url)
